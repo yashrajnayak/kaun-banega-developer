@@ -28,8 +28,16 @@ const QuestionCard = ({
   const [animateOptions, setAnimateOptions] = useState(false);
   
   useEffect(() => {
-    // Animate options entrance
-    setAnimateOptions(true);
+    // Reset animation state first
+    setAnimateOptions(false);
+    
+    // Then set a small timeout to trigger animation after render
+    const animationTimer = setTimeout(() => {
+      setAnimateOptions(true);
+    }, 50);
+    
+    // Clean up timer
+    return () => clearTimeout(animationTimer);
   }, [question]);
   
   // Helper function to determine option class
@@ -104,7 +112,7 @@ const QuestionCard = ({
         )}
         
         {/* Answer options */}
-        <div className={`grid grid-cols-1 gap-2 ${animateOptions ? 'animate-slide-in' : ''}`}>
+        <div className={`grid grid-cols-1 gap-2 ${animateOptions ? 'animate-slide-in' : 'opacity-0'}`}>
           {question.options.map((option, index) => (
             <button
               key={index}

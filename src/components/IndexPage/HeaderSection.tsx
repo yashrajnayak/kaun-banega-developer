@@ -99,7 +99,7 @@ const HeaderSection = () => {
         
         <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
           Test your knowledge of Git, GitHub, and GitHub Copilot in this exciting
-          game show format. Answer 15 progressively difficult questions and win up to 10,000 GitHub Stickers!
+          game show format. Answer 15 progressively difficult questions and win up to 10,000 Stickers!
         </p>
         
         <div className="flex flex-col items-center justify-center gap-4 max-w-md mx-auto">

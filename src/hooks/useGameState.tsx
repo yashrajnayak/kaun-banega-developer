@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   GameStatus, 
   LifelineType, 
@@ -30,6 +30,23 @@ export function useGameState() {
     { type: 'debug', used: false }
   ]);
   
+  // Refs to track and manage timeouts
+  const timeoutsRef = useRef<number[]>([]);
+  
+  // Helper function to safely set timeouts
+  const safeSetTimeout = (callback: () => void, delay: number): number => {
+    const timeoutId = window.setTimeout(callback, delay);
+    timeoutsRef.current.push(timeoutId);
+    return timeoutId;
+  };
+  
+  // Clean up all timeouts when component unmounts
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach(clearTimeout);
+    };
+  }, []);
+  
   // Initialize game
   useEffect(() => {
     if (gameStatus === 'inProgress' && !currentQuestion) {
@@ -52,6 +69,10 @@ export function useGameState() {
   
   // Start new game
   const startGame = () => {
+    // Clear any existing timeouts
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+    
     setGameStatus('inProgress');
     setCurrentQuestionNumber(1);
     setSelectedAnswer(null);
@@ -75,13 +96,17 @@ export function useGameState() {
   const selectAnswer = (answerIndex: number) => {
     if (revealAnswer || selectedAnswer !== null) return;
     
+    // Clear any existing timeouts first
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+    
     // Play selection sound
     playSound('finalAnswer', 0.5);
     
     setSelectedAnswer(answerIndex);
     
     // Reveal the correct answer after a delay
-    setTimeout(() => {
+    safeSetTimeout(() => {
       setRevealAnswer(true);
       
       // Play correct/wrong sound
@@ -92,7 +117,7 @@ export function useGameState() {
       }
       
       // Determine outcome after showing the correct answer
-      setTimeout(() => {
+      safeSetTimeout(() => {
         if (currentQuestion && answerIndex === currentQuestion.correctAnswer) {
           // Correct answer
           if (currentQuestionNumber === 15) {
@@ -112,8 +137,12 @@ export function useGameState() {
   
   // Handle walk away
   const walkAway = () => {
+    // Clear any existing timeouts
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
+    
     playSound('finalAnswer', 0.5);
-    setTimeout(() => {
+    safeSetTimeout(() => {
       setGameStatus('walkAway');
     }, 1000);
   };

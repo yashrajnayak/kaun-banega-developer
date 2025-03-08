@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Timer } from 'lucide-react';
 import { playSound } from '../utils/audioManager';
 
@@ -12,15 +12,24 @@ const GameTimer = ({ questionNumber, onTimeUp, paused = false }: GameTimerProps)
   // Questions after 2nd safe level (Q10) get 40 seconds
   const totalTime = questionNumber > 10 ? 40 : 20;
   const [timeLeft, setTimeLeft] = useState(totalTime);
-
+  
+  // Use a ref to prevent onTimeUp from causing an effect dependency
+  const onTimeUpRef = useRef(onTimeUp);
+  
+  // Update ref when onTimeUp changes
   useEffect(() => {
-    // Reset timer when question changes
+    onTimeUpRef.current = onTimeUp;
+  }, [onTimeUp]);
+  
+  // Reset timer when question changes or totalTime changes
+  useEffect(() => {
     setTimeLeft(totalTime);
   }, [questionNumber, totalTime]);
-
+  
+  // Timer effect with proper cleanup
   useEffect(() => {
     if (paused) return;
-
+    
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         // Play tick sound in last 5 seconds
@@ -31,16 +40,17 @@ const GameTimer = ({ questionNumber, onTimeUp, paused = false }: GameTimerProps)
         // Time's up
         if (prev <= 1) {
           clearInterval(timer);
-          onTimeUp();
+          onTimeUpRef.current();
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
-
+    
+    // Proper cleanup to prevent memory leaks
     return () => clearInterval(timer);
-  }, [paused, onTimeUp]);
-
+  }, [paused, totalTime]); // Add totalTime to dependencies
+  
   // Calculate progress percentage
   const progress = (timeLeft / totalTime) * 100;
   
@@ -50,7 +60,7 @@ const GameTimer = ({ questionNumber, onTimeUp, paused = false }: GameTimerProps)
     if (timeLeft > 5) return 'bg-game-yellow';
     return 'bg-game-red';
   };
-
+  
   return (
     <div className="w-full glass-card p-2 rounded-lg flex items-center gap-2">
       <Timer size={18} className={timeLeft <= 5 ? 'animate-pulse text-game-red' : ''} />

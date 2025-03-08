@@ -198,7 +198,7 @@ const Game = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Walk Away Confirmation</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to walk away with {currentStickers} GitHub Stickers? You won't be able to continue the game.
+              Are you sure you want to walk away with {currentStickers} Stickers? You won't be able to continue the game.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

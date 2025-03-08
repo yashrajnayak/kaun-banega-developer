@@ -45,13 +45,13 @@ const GameOver = ({
     
     switch (gameStatus) {
       case 'won':
-        return `You've reached the top and won ${formatNumber(winnings)} GitHub Stickers${userName}`;
+        return `You've reached the top and won ${formatNumber(winnings)} Stickers${userName}`;
       case 'walkAway':
-        return `You decided to walk away with ${formatNumber(winnings)} GitHub Stickers${userName}`;
+        return `You decided to walk away with ${formatNumber(winnings)} Stickers${userName}`;
       case 'lost':
         return winnings > 0 
-          ? `You're going home with ${formatNumber(winnings)} GitHub Stickers${userName}` 
-          : `Unfortunately, you didn't win any GitHub Stickers${userName}`;
+          ? `You're going home with ${formatNumber(winnings)} Stickers${userName}` 
+          : `Unfortunately, you didn't win any Stickers${userName}`;
       default:
         return '';
     }
