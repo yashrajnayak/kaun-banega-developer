@@ -60,15 +60,6 @@ const QuestionCard = ({
   return (
     <div className="w-full flex flex-col">
       <div className="glass-card p-6 rounded-lg mb-4 shadow-lg animate-entrance">
-        {/* Timer */}
-        <div className="mb-4">
-          <GameTimer 
-            questionNumber={question.id} 
-            onTimeUp={() => onSelectAnswer(-1)} 
-            paused={selectedAnswer !== null || revealAnswer}
-          />
-        </div>
-
         <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center">{question.text}</h2>
         
         {/* Hint text from documentation lifeline */}
@@ -113,7 +104,7 @@ const QuestionCard = ({
         )}
         
         {/* Answer options */}
-        <div className={`grid grid-cols-1 gap-2 mt-4 ${animateOptions ? 'animate-slide-in' : ''}`}>
+        <div className={`grid grid-cols-1 gap-2 ${animateOptions ? 'animate-slide-in' : ''}`}>
           {question.options.map((option, index) => (
             <button
               key={index}
@@ -127,6 +118,15 @@ const QuestionCard = ({
               <span>{option}</span>
             </button>
           ))}
+        </div>
+        
+        {/* Timer - moved below answer options */}
+        <div className="mt-4">
+          <GameTimer 
+            questionNumber={question.id} 
+            onTimeUp={() => onSelectAnswer(-1)} 
+            paused={selectedAnswer !== null || revealAnswer}
+          />
         </div>
       </div>
     </div>

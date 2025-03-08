@@ -82,18 +82,6 @@ const GameOver = ({
     // Create title
     const title = `${githubUser.login} | ${formatNumber(winnings)} Stickers`;
 
-    // Determine level reached
-    let levelLabel = '';
-    if (gameStatus === 'won') {
-      levelLabel = 'level: expert';
-    } else if (currentQuestionNumber > 10) {
-      levelLabel = 'level: advanced';
-    } else if (currentQuestionNumber > 5) {
-      levelLabel = 'level: intermediate';
-    } else {
-      levelLabel = 'level: beginner';
-    }
-    
     // Create body content with emojis
     let body = `## Questions I Answered Correctly 🏆\n`;
     
@@ -119,15 +107,9 @@ const GameOver = ({
       });
     }
     
-    // Add game status with corresponding emoji
+    // Add game status with corresponding emoji (everything below this is removed as requested)
     const statusEmoji = gameStatus === 'won' ? '🎉' : gameStatus === 'walkAway' ? '💰' : '🎮';
-    body += `\n## Final Game Status: ${gameStatus.charAt(0).toUpperCase()}${gameStatus.slice(1)} ${statusEmoji}\n\n`;
-    
-    // Add GitHub profile link
-    body += `[Visit My GitHub Profile](${githubUser.html_url}) 👋\n\n`;
-    
-    // Add level label
-    body += `/labels "${levelLabel}"`;
+    body += `\n## Final Game Status: ${gameStatus.charAt(0).toUpperCase()}${gameStatus.slice(1)} ${statusEmoji}`;
     
     // Encode parameters for URL
     const encodedTitle = encodeURIComponent(title);

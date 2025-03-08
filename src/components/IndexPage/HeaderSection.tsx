@@ -80,7 +80,7 @@ const HeaderSection = () => {
       {/* Logo */}
       <div className="relative z-10 flex justify-center mb-6">
         <img 
-          src="/logo.png" 
+          src="./logo.png" 
           alt="Game Logo"
           className="h-24 w-auto object-contain"
         />
