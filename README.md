@@ -7,12 +7,12 @@
 
 ## Overview
 
-Kaun Banega Developer (Who Wants to Be a Developer) is an interactive quiz game inspired by the classic TV show format, but focused on Git, GitHub, and GitHub Copilot knowledge. Test your developer skills and knowledge while earning GitHub stickers in a fun, engaging format!
+Kaun Banega Developer (Who Wants to Be a Developer) is an interactive quiz game inspired by the classic TV show format, but focused on Git, GitHub, and GitHub Copilot knowledge.
 
 ## Features
 
 - 15 progressively difficult questions about Git, GitHub, and GitHub Copilot
-- Win up to 10,000 GitHub stickers (virtual, for fun only)
+- Win up to 10,000 stickers (virtual, for fun only)
 - Four powerful lifelines to help when you're stuck
 - Safe levels to secure your winnings
 - GitHub account integration
