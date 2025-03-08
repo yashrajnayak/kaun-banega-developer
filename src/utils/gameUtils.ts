@@ -1,4 +1,3 @@
-
 import { questions, prizeLevels, PrizeLevel, Question } from '../data/questions';
 import { playSound } from './audioManager';
 
@@ -14,21 +13,36 @@ export interface LifelineState {
 // Cached questions for each level to ensure no duplicates in a game
 const cachedQuestions: Record<number, Question> = {};
 
+// Keep track of used questions during the game session
+const usedQuestions = new Set<string>();
+
+// Reset cached questions (for new game)
+export const resetCachedQuestions = (): void => {
+  Object.keys(cachedQuestions).forEach(key => {
+    delete cachedQuestions[Number(key)];
+  });
+};
+
+// Reset used questions (for new game)
+export const resetUsedQuestions = (): void => {
+  usedQuestions.clear();
+};
+
 // Get current question based on question number
 export const getCurrentQuestion = (questionNumber: number): Question => {
   return questions.find(q => q.id === questionNumber) || questions[0];
 };
 
-// Get a random question for the given level
+// Get a random question for the given question number
 export const getRandomQuestion = (questionNumber: number): Question => {
-  // Return cached question if it exists
+  // If question is cached, return it
   if (cachedQuestions[questionNumber]) {
     return cachedQuestions[questionNumber];
   }
   
-  // Determine difficulty level based on question number
   let difficulty: 'easy' | 'medium' | 'hard';
   
+  // Determine difficulty based on question number
   if (questionNumber <= 5) {
     difficulty = 'easy';
   } else if (questionNumber <= 10) {
@@ -37,17 +51,23 @@ export const getRandomQuestion = (questionNumber: number): Question => {
     difficulty = 'hard';
   }
   
-  // Filter questions by difficulty
-  const questionsForLevel = questions.filter(q => q.level === difficulty);
+  // Filter questions by difficulty and exclude used questions
+  const availableQuestions = questions.filter(q => 
+    q.level === difficulty && !usedQuestions.has(q.text)
+  );
   
-  // If no questions available for this level, use getCurrentQuestion as fallback
-  if (questionsForLevel.length === 0) {
-    return getCurrentQuestion(questionNumber);
+  // If no unused questions available, reset used questions and try again
+  if (availableQuestions.length === 0) {
+    usedQuestions.clear();
+    return getRandomQuestion(questionNumber);
   }
   
   // Select a random question from the filtered list
-  const randomIndex = Math.floor(Math.random() * questionsForLevel.length);
-  const selectedQuestion = questionsForLevel[randomIndex];
+  const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+  const selectedQuestion = availableQuestions[randomIndex];
+  
+  // Mark question as used
+  usedQuestions.add(selectedQuestion.text);
   
   // Create a copy with the correct question number
   const questionWithCorrectId = {
@@ -59,13 +79,6 @@ export const getRandomQuestion = (questionNumber: number): Question => {
   cachedQuestions[questionNumber] = questionWithCorrectId;
   
   return questionWithCorrectId;
-};
-
-// Reset cached questions (for new game)
-export const resetCachedQuestions = (): void => {
-  Object.keys(cachedQuestions).forEach(key => {
-    delete cachedQuestions[Number(key)];
-  });
 };
 
 // Get prize amount for a specific question number

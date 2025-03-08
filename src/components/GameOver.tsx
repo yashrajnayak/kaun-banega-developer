@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { GameStatus } from '../utils/gameUtils';
 import { formatNumber } from '../utils/gameUtils';
@@ -11,6 +10,7 @@ interface GameOverProps {
   winnings: number;
   onPlayAgain: () => void;
   githubUser: GitHubUser | null;
+  currentQuestionNumber: number;
   answeredQuestions?: {
     question: string;
     questionNumber: number;
@@ -18,7 +18,14 @@ interface GameOverProps {
   }[];
 }
 
-const GameOver = ({ gameStatus, winnings, onPlayAgain, githubUser, answeredQuestions = [] }: GameOverProps) => {
+const GameOver = ({ 
+  gameStatus, 
+  winnings, 
+  onPlayAgain, 
+  githubUser, 
+  currentQuestionNumber,
+  answeredQuestions = [] 
+}: GameOverProps) => {
   // Determine title and message based on game status
   const getTitle = () => {
     switch (gameStatus) {
@@ -62,9 +69,9 @@ const GameOver = ({ gameStatus, winnings, onPlayAgain, githubUser, answeredQuest
       case 'walkAway':
         return "https://octodex.github.com/images/nyantocat.gif";
       case 'lost':
-        return "https://octodex.github.com/images/hubot.jpg";
+        return "https://octodex.github.com/images/spectrocat.png";
       default:
-        return "https://octodex.github.com/images/octocat-de-los-muertos.jpg";
+        return "https://octodex.github.com/images/hubot.jpg";
     }
   };
 
@@ -74,38 +81,65 @@ const GameOver = ({ gameStatus, winnings, onPlayAgain, githubUser, answeredQuest
     
     // Create title
     const title = `${githubUser.login} | ${formatNumber(winnings)} Stickers`;
-    
-    // Create body content
-    let body = `# My Score: ${formatNumber(winnings)} GitHub Stickers\n\n`;
-    
-    // Add correctly answered questions
-    const correctQuestions = answeredQuestions.filter(q => q.correct);
-    if (correctQuestions.length > 0) {
-      body += "## Questions I Answered Correctly:\n";
-      correctQuestions.forEach(q => {
-        body += `- Question ${q.questionNumber}: ${q.question}\n`;
-      });
-      body += "\n";
+
+    // Determine level reached
+    let levelLabel = '';
+    if (gameStatus === 'won') {
+      levelLabel = 'level: expert';
+    } else if (currentQuestionNumber > 10) {
+      levelLabel = 'level: advanced';
+    } else if (currentQuestionNumber > 5) {
+      levelLabel = 'level: intermediate';
+    } else {
+      levelLabel = 'level: beginner';
     }
     
-    // Add incorrectly answered questions
+    // Create body content with emojis
+    let body = `## Questions I Answered Correctly 🏆\n`;
+    
+    // Add correctly answered questions (with trophy emoji)
+    const seenQuestions = new Set(); // Track seen questions to avoid duplicates
+    const correctQuestions = answeredQuestions.filter(q => q.correct);
+    correctQuestions.forEach(q => {
+      if (!seenQuestions.has(q.question)) {
+        body += `- Question ${q.questionNumber}: ${q.question}\n`;
+        seenQuestions.add(q.question);
+      }
+    });
+    
+    // Add incorrectly answered questions (with x emoji)
     const incorrectQuestions = answeredQuestions.filter(q => !q.correct);
     if (incorrectQuestions.length > 0) {
-      body += "## Questions I Missed:\n";
+      body += "\n## Questions I Missed ❌\n";
       incorrectQuestions.forEach(q => {
-        body += `- Question ${q.questionNumber}: ${q.question}\n`;
+        if (!seenQuestions.has(q.question)) {
+          body += `- Question ${q.questionNumber}: ${q.question}\n`;
+          seenQuestions.add(q.question);
+        }
       });
-      body += "\n";
     }
     
-    body += "## Game Status\n";
-    body += `- Final Status: ${gameStatus}\n`;
+    // Add game status with corresponding emoji
+    const statusEmoji = gameStatus === 'won' ? '🎉' : gameStatus === 'walkAway' ? '💰' : '🎮';
+    body += `\n## Final Game Status: ${gameStatus.charAt(0).toUpperCase()}${gameStatus.slice(1)} ${statusEmoji}\n\n`;
+    
+    // Add GitHub profile link
+    body += `[Visit My GitHub Profile](${githubUser.html_url}) 👋\n\n`;
+    
+    // Add level label
+    body += `/labels "${levelLabel}"`;
     
     // Encode parameters for URL
     const encodedTitle = encodeURIComponent(title);
     const encodedBody = encodeURIComponent(body);
     
     return `https://github.com/yashrajnayak/kaun-banega-developer-scores/issues/new?title=${encodedTitle}&body=${encodedBody}`;
+  };
+
+  const handlePlayAgain = () => {
+    // Clear GitHub user cache
+    localStorage.removeItem('githubUser');
+    onPlayAgain();
   };
 
   return (
@@ -125,19 +159,20 @@ const GameOver = ({ gameStatus, winnings, onPlayAgain, githubUser, answeredQuest
       
       <Button 
         className="w-full bg-accent hover:bg-accent/80 text-white px-8 py-4 rounded-lg text-lg font-bold transition-all duration-300 mb-4"
-        onClick={onPlayAgain}
+        onClick={handlePlayAgain}
       >
         <HomeIcon className="mr-2" />
         Play Again
       </Button>
       
-      {/* Share Score button - only shown if user provided GitHub username */}
-      {githubUser && githubUser.login && (
+      {/* Share Score button - only shown if user provided GitHub username and has winnings */}
+      {githubUser && githubUser.login && winnings > 0 && (
         <a
           href={createShareUrl()}
           target="_blank"
           rel="noopener noreferrer"
           className="block w-full"
+          onClick={() => localStorage.removeItem('githubUser')}
         >
           <Button 
             className="w-full bg-game-purple hover:bg-game-purple/80 text-white px-8 py-4 rounded-lg text-lg font-bold transition-all duration-300"

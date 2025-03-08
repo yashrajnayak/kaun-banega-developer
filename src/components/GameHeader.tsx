@@ -1,4 +1,3 @@
-
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -31,7 +30,7 @@ const GameHeader = ({
   const getLifelineIcon = (type: LifelineType) => {
     switch (type) {
       case '50:50':
-        return <Divide size={22} />;
+        return <span className="text-sm font-bold px-2">50:50</span>;
       case 'documentation':
         return <HelpCircle size={22} />;
       case 'poll':

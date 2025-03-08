@@ -16,7 +16,11 @@ const HeaderSection = () => {
   
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setGithubUsername(e.target.value.trim());
-    if (usernameError) setUsernameError('');
+    if (usernameError) {
+      setUsernameError('');
+      // Clear and reset the input value
+      e.target.value = '';
+    }
   };
   
   const startGame = async () => {
@@ -38,9 +42,11 @@ const HeaderSection = () => {
         setInputShake(true);
         setValidating(false);
         
-        // Reset shake animation after it completes
+        // Reset shake animation and error after it completes
         setTimeout(() => {
           setInputShake(false);
+          setUsernameError('');
+          setGithubUsername('');
         }, 600);
       }
     } else {
@@ -74,7 +80,7 @@ const HeaderSection = () => {
       {/* Logo */}
       <div className="relative z-10 flex justify-center mb-6">
         <img 
-          src="/lovable-uploads/6ba374bc-a305-4b18-b1a5-5cbe165dcc5e.png" 
+          src="/logo.png" 
           alt="Game Logo"
           className="h-24 w-auto object-contain"
         />
@@ -100,15 +106,13 @@ const HeaderSection = () => {
           <div className="w-full">
             <Input
               type="text"
-              placeholder="Enter your GitHub username (optional)"
-              value={githubUsername}
+              placeholder={usernameError ? '' : "Enter your GitHub username (optional)"}
+              value={usernameError || githubUsername}
               onChange={handleUsernameChange}
-              className={`bg-card/50 border-white/10 text-white placeholder:text-white/50 w-full text-lg h-12 text-center placeholder:text-center ${inputShake ? 'animate-shake' : ''} ${usernameError ? 'border-game-red' : ''}`}
+              className={`bg-card/50 border-white/10 text-white text-lg sm:text-xl placeholder:text-white/50 w-full h-12 text-center placeholder:text-center ${inputShake ? 'animate-shake' : ''} ${usernameError ? 'border-game-red text-game-red' : ''}`}
               disabled={loading || validating}
             />
-            {usernameError && (
-              <p className="text-game-red text-sm mt-1">{usernameError}</p>
-            )}
+            {/* Remove the error paragraph since we're showing it in the input */}
           </div>
           
           <Button 

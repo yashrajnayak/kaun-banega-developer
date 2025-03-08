@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { Question } from '../data/questions';
 import { BarChart2 } from 'lucide-react';
 import { formatNumber } from '../utils/gameUtils';
+import GameTimer from './GameTimer';
 
 interface QuestionCardProps {
   question: Question;
@@ -60,6 +60,15 @@ const QuestionCard = ({
   return (
     <div className="w-full flex flex-col">
       <div className="glass-card p-6 rounded-lg mb-4 shadow-lg animate-entrance">
+        {/* Timer */}
+        <div className="mb-4">
+          <GameTimer 
+            questionNumber={question.id} 
+            onTimeUp={() => onSelectAnswer(-1)} 
+            paused={selectedAnswer !== null || revealAnswer}
+          />
+        </div>
+
         <h2 className="text-xl sm:text-2xl font-bold mb-6 text-center">{question.text}</h2>
         
         {/* Hint text from documentation lifeline */}

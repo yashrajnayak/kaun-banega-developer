@@ -1,9 +1,8 @@
-
 import { Terminal, Trophy, Code2, Github } from 'lucide-react';
 
 const FeaturesSection = () => {
   return (
-    <div className="bg-card/80 p-8 sm:p-12 border-t border-white/10">
+    <div className="bg-card/80 p-8 sm:p-12 border-t border-white/10 mb-8">
       <h2 className="text-2xl font-bold mb-8 text-center">Game Features</h2>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

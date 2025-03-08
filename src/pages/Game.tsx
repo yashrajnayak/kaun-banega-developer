@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -144,25 +143,27 @@ const Game = () => {
           />
           
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-3 flex flex-col h-full">
               {/* Question */}
-              <QuestionCard 
-                question={currentQuestion}
-                selectedAnswer={selectedAnswer}
-                revealAnswer={revealAnswer}
-                eliminatedOptions={eliminatedOptions}
-                onSelectAnswer={selectAnswer}
-                showPoll={showPoll}
-                showDebugCode={showDebugCode}
-                hintText={hintText}
-              />
+              <div className="flex-grow">
+                <QuestionCard 
+                  question={currentQuestion}
+                  selectedAnswer={selectedAnswer}
+                  revealAnswer={revealAnswer}
+                  eliminatedOptions={eliminatedOptions}
+                  onSelectAnswer={selectAnswer}
+                  showPoll={showPoll}
+                  showDebugCode={showDebugCode}
+                  hintText={hintText}
+                />
+              </div>
               
               {/* Walk away button */}
               {!selectedAnswer && !revealAnswer && (
-                <div className="flex justify-center my-4">
+                <div className="w-full mt-4">
                   <Button 
                     variant="outline"
-                    className="border-game-border hover:bg-destructive/20 transition-all"
+                    className="w-full border-game-border hover:bg-destructive/20 transition-all"
                     onClick={() => setShowWalkAwayDialog(true)}
                   >
                     Walk Away with {currentStickers} Stickers
@@ -186,6 +187,7 @@ const Game = () => {
           winnings={winnings} 
           onPlayAgain={handleBackToHome}
           githubUser={githubUser}
+          currentQuestionNumber={currentQuestionNumber}
           answeredQuestions={answeredQuestions}
         />
       )}

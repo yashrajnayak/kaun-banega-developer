@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { 
   GameStatus, 
@@ -7,7 +6,9 @@ import {
   getCurrentQuestion,
   getFiftyFiftyOptions,
   calculateWinnings,
-  getRandomQuestion
+  getRandomQuestion,
+  resetCachedQuestions,
+  resetUsedQuestions
 } from '../utils/gameUtils';
 import { Question } from '../data/questions';
 import { playSound } from '../utils/audioManager';
@@ -65,6 +66,8 @@ export function useGameState() {
       { type: 'poll', used: false },
       { type: 'debug', used: false }
     ]);
+    resetCachedQuestions();
+    resetUsedQuestions();
     playSound('backgroundMusic', 0.3, true);
   };
   
